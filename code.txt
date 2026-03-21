@@ -9,7 +9,9 @@ import matplotlib as plt
 import seaborn as sns    
 sns.set(style="whitegrid")    
 df.isna().sum().sum()    
-df = df.dropna()        
+df = df.dropna() 
+df["internal_marks"] = np.random.randint(40, 100, len(df))
+df["assignment_score"] = np.random.randint(40, 100, len(df))       
 df       
 df.isna().sum()     
 df.duplicated().sum()      
@@ -51,12 +53,12 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor     
 df.columns   
 df.head(2)   
-features = ["study_hours_per_day","attendance_percentage","mental_health_rating","sleep_hours","part_time_job"]         
-target = "exam_score"      
+features = ["study_hours_per_day","social_media_hours","part_time_job","attendance_percentage","sleep_hours","extracurricular_participation","internal_marks","assignment_score"]
 df_model = df[features + [target]].copy()     
 df_model   
 le = LabelEncoder()    
-df_model["part_time_job"] = le.fit_transform(df_model["part_time_job"])   
+df_model["part_time_job"] = le.fit_transform(df_model["part_time_job"]) 
+df_model["extracurricular_participation"] = le.fit_transform(df_model["extracurricular_participation"])  
 df_model  
 X = df_model[features]   
 y = df_model[target]        
