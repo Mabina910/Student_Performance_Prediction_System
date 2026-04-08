@@ -1,0 +1,825 @@
+import streamlit as st
+import numpy as np
+import joblib
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import pandas as pd
+import json
+import os
+import re
+
+# ─────────────────────────────────────────────
+#  PAGE CONFIG
+# ─────────────────────────────────────────────
+st.set_page_config(
+    page_title="EduPredict",
+    page_icon="🎓",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# ─────────────────────────────────────────────
+#  GLOBAL CSS
+# ─────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, [data-testid="stAppViewContainer"] {
+    background: #0d0f14 !important;
+    color: #e8eaf0 !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+
+[data-testid="stAppViewContainer"]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 50% at 20% 10%, rgba(99,102,241,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(16,185,129,.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ---------- Hide Streamlit chrome ---------- */
+#MainMenu, footer, header { visibility: hidden; }
+[data-testid="stToolbar"] { display: none; }
+[data-testid="stDecoration"] { display: none; }
+
+/* ---------- Sidebar ---------- */
+[data-testid="stSidebar"] {
+    background: #13151d !important;
+    border-right: 1px solid rgba(255,255,255,.06) !important;
+}
+[data-testid="stSidebar"] * { color: #c8cad4 !important; }
+
+/* ---------- Cards / containers ---------- */
+.card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(8px);
+}
+.card-accent {
+    border-left: 3px solid #6366f1;
+}
+
+/* ---------- Page title ---------- */
+.page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    background: linear-gradient(135deg, #e8eaf0 30%, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+}
+.page-sub {
+    font-size: .95rem;
+    color: #6b7280;
+    margin-bottom: 32px;
+    font-weight: 300;
+}
+
+/* ---------- Section headers ---------- */
+.section-header {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #a5b4fc;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin: 32px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.section-header::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,.07);
+}
+
+/* ---------- Metric tiles ---------- */
+.metric-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.metric-tile {
+    flex: 1;
+    min-width: 140px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 20px 22px;
+    text-align: center;
+}
+.metric-tile .val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #e8eaf0;
+}
+.metric-tile .lbl {
+    font-size: .78rem;
+    color: #6b7280;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+.metric-tile.green .val { color: #10b981; }
+.metric-tile.amber .val { color: #f59e0b; }
+.metric-tile.red   .val { color: #ef4444; }
+
+/* ---------- Login card ---------- */
+.login-wrap {
+    max-width: 440px;
+    margin: 60px auto 0;
+}
+.login-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, #e8eaf0, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.login-tagline {
+    text-align: center;
+    color: #6b7280;
+    font-size: .9rem;
+    margin-bottom: 32px;
+}
+
+/* ---------- Inputs ---------- */
+[data-testid="stTextInput"] input,
+[data-testid="stSelectbox"] div[data-baseweb="select"] {
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 10px !important;
+    color: #e8eaf0 !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+[data-testid="stTextInput"] input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.2) !important;
+}
+label { color: #9ca3af !important; font-size: .85rem !important; }
+
+/* ---------- Buttons ---------- */
+[data-testid="stButton"] > button {
+    width: 100%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: .95rem !important;
+    padding: 12px !important;
+    letter-spacing: .03em;
+    transition: opacity .2s, transform .15s;
+}
+[data-testid="stButton"] > button:hover {
+    opacity: .88;
+    transform: translateY(-1px);
+}
+
+/* ---------- Alerts ---------- */
+[data-testid="stSuccess"] {
+    background: rgba(16,185,129,.12) !important;
+    border-left: 3px solid #10b981 !important;
+    border-radius: 10px !important;
+    color: #6ee7b7 !important;
+}
+[data-testid="stInfo"] {
+    background: rgba(99,102,241,.12) !important;
+    border-left: 3px solid #6366f1 !important;
+    border-radius: 10px !important;
+    color: #a5b4fc !important;
+}
+[data-testid="stWarning"] {
+    background: rgba(245,158,11,.10) !important;
+    border-left: 3px solid #f59e0b !important;
+    border-radius: 10px !important;
+    color: #fcd34d !important;
+}
+[data-testid="stError"] {
+    background: rgba(239,68,68,.10) !important;
+    border-left: 3px solid #ef4444 !important;
+    border-radius: 10px !important;
+    color: #fca5a5 !important;
+}
+
+/* ---------- Sliders ---------- */
+[data-testid="stSlider"] [data-testid="stThumbValue"] { color: #a5b4fc !important; }
+[data-testid="stSlider"] [class*="Track"] { background: #6366f1 !important; }
+
+/* ---------- Dataframe ---------- */
+[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
+iframe { border-radius: 12px; }
+
+/* ---------- Suggestion pills ---------- */
+.suggestion-pill {
+    display: inline-block;
+    background: rgba(99,102,241,.15);
+    border: 1px solid rgba(99,102,241,.3);
+    color: #c7d2fe;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: .85rem;
+    margin: 4px 4px 4px 0;
+}
+
+/* ---------- Risk badge ---------- */
+.risk-badge {
+    display: inline-block;
+    border-radius: 8px;
+    padding: 5px 14px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    letter-spacing: .04em;
+}
+.risk-safe   { background: rgba(16,185,129,.18); color: #6ee7b7; border: 1px solid rgba(16,185,129,.3); }
+.risk-medium { background: rgba(245,158,11,.15); color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
+.risk-high   { background: rgba(239,68,68,.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
+
+/* ---------- Chart background ---------- */
+.stPlotlyChart, [data-testid="stImage"] { border-radius: 12px; }
+
+/* ---------- Prediction model cards ---------- */
+.model-pred-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.model-card {
+    flex: 1; min-width: 120px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+.model-card.best {
+    border-color: rgba(99,102,241,.5);
+    background: rgba(99,102,241,.1);
+}
+.model-card .score {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #e8eaf0;
+}
+.model-card .name {
+    font-size: .75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-top: 4px;
+}
+.best-tag {
+    font-size: .65rem;
+    background: #6366f1;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-top: 6px;
+    display: inline-block;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+#  MATPLOTLIB DARK THEME
+# ─────────────────────────────────────────────
+plt.rcParams.update({
+    "figure.facecolor":  "#13151d",
+    "axes.facecolor":    "#13151d",
+    "axes.edgecolor":    "#2d2f3a",
+    "axes.labelcolor":   "#9ca3af",
+    "xtick.color":       "#6b7280",
+    "ytick.color":       "#6b7280",
+    "text.color":        "#e8eaf0",
+    "grid.color":        "#1e2030",
+    "grid.alpha":        0.6,
+    "font.family":       "sans-serif",
+    "axes.spines.top":   False,
+    "axes.spines.right": False,
+})
+
+# ─────────────────────────────────────────────
+#  LOAD MODEL
+# ─────────────────────────────────────────────
+loaded      = joblib.load("best_model.pkl")
+models      = loaded["models"]
+best_model  = loaded["best_model"]
+best_model_name = loaded["best_model_name"]
+results     = loaded["results"]
+features    = loaded["features"]
+scaler      = loaded["scaler"]
+
+# ─────────────────────────────────────────────
+#  FILES
+# ─────────────────────────────────────────────
+USER_FILE    = "users.json"
+HISTORY_FILE = "history.json"
+
+for f in [USER_FILE, HISTORY_FILE]:
+    if not os.path.exists(f):
+        with open(f, "w") as file:
+            json.dump({}, file)
+
+def load_users():
+    with open(USER_FILE, "r") as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USER_FILE, "w") as f:
+        json.dump(users, f)
+
+def load_history():
+    with open(HISTORY_FILE, "r") as f:
+        return json.load(f)
+
+def save_history(history):
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f)
+
+# ─────────────────────────────────────────────
+#  VALIDATION
+# ─────────────────────────────────────────────
+def validate_email(email):
+    return re.match(r"^[a-zA-Z0-9._%+-]+@gmail\.com$", email)
+
+def validate_password(password):
+    return (
+        len(password) >= 8 and
+        re.search(r"[A-Z]", password) and
+        re.search(r"[0-9]", password) and
+        re.search(r"[!@#$%^&*]", password)
+    )
+
+# ─────────────────────────────────────────────
+#  SESSION
+# ─────────────────────────────────────────────
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# ─────────────────────────────────────────────
+#  LOGIN / SIGNUP
+# ─────────────────────────────────────────────
+if not st.session_state.logged_in:
+
+    # Centered column
+    _, col, _ = st.columns([1, 1.4, 1])
+    with col:
+        st.markdown('<div class="login-logo">🎓 EduPredict</div>', unsafe_allow_html=True)
+        st.markdown('<div class="login-tagline">Predict. Improve. Succeed.</div>', unsafe_allow_html=True)
+
+        with st.container():
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+
+            tab_login, tab_signup = st.tabs(["🔑  Login", "✨  Sign Up"])
+
+            # ── LOGIN TAB ──
+            with tab_login:
+                st.markdown("<br>", unsafe_allow_html=True)
+                role_l  = st.selectbox("Role", ["Student", "Teacher"], key="role_l")
+                email_l = st.text_input("Gmail address", placeholder="you@gmail.com", key="email_l")
+                pass_l  = st.text_input("Password", type="password", key="pass_l")
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("Login →", key="btn_login"):
+                    users = load_users()
+                    if not validate_email(email_l):
+                        st.error("Please enter a valid Gmail address.")
+                    elif email_l not in users:
+                        st.error("Account not found. Please sign up first.")
+                    elif users[email_l]["password"] != pass_l:
+                        st.error("Incorrect password.")
+                    else:
+                        st.session_state.logged_in   = True
+                        st.session_state.user_email  = email_l
+                        st.rerun()
+
+            # ── SIGNUP TAB ──
+            with tab_signup:
+                st.markdown("<br>", unsafe_allow_html=True)
+                role_s  = st.selectbox("Role", ["Student", "Teacher"], key="role_s")
+                email_s = st.text_input("Gmail address", placeholder="you@gmail.com", key="email_s")
+                pass_s  = st.text_input("Password", type="password", key="pass_s",
+                                        help="Min 8 chars · 1 uppercase · 1 number · 1 special (!@#$%^&*)")
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("Create Account →", key="btn_signup"):
+                    users = load_users()
+                    if not validate_email(email_s):
+                        st.error("Please enter a valid Gmail address.")
+                    elif not validate_password(pass_s):
+                        st.error("Weak password — need 8+ chars, uppercase, number, special char.")
+                    elif email_s in users:
+                        st.error("This email is already registered. Try logging in.")
+                    else:
+                        users[email_s] = {"password": pass_s, "role": role_s}
+                        save_users(users)
+                        st.session_state.logged_in  = True
+                        st.session_state.user_email = email_s
+                        st.rerun()
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown(
+            '<p style="text-align:center;color:#374151;font-size:.78rem;margin-top:24px;">'
+            'EduPredict · Student Performance Analytics</p>',
+            unsafe_allow_html=True,
+        )
+
+# ─────────────────────────────────────────────
+#  MAIN APP (logged in)
+# ─────────────────────────────────────────────
+else:
+    users      = load_users()
+    history    = load_history()
+    user_email = st.session_state.user_email
+    role       = users[user_email]["role"]
+
+    # ── Sidebar ──
+    with st.sidebar:
+        st.markdown(
+            f'<div style="font-family:Syne,sans-serif;font-size:1.4rem;font-weight:800;'
+            f'margin-bottom:4px;">🎓 EduPredict</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(f"<small style='color:#6b7280'>{user_email}</small>", unsafe_allow_html=True)
+        badge_cls = "risk-safe" if role == "Teacher" else "risk-medium"
+        st.markdown(
+            f'<span class="risk-badge {badge_cls}" style="margin:12px 0;display:inline-block">'
+            f'{"👩‍🏫" if role == "Teacher" else "👨‍🎓"} {role}</span>',
+            unsafe_allow_html=True,
+        )
+        st.divider()
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.rerun()
+
+    # ══════════════════════════════════════════
+    #  TEACHER DASHBOARD
+    # ══════════════════════════════════════════
+    if role == "Teacher":
+
+        st.markdown('<div class="page-title">Teacher Dashboard</div>', unsafe_allow_html=True)
+        st.markdown('<div class="page-sub">Predict and track student exam performance</div>', unsafe_allow_html=True)
+
+        # ── Input Form ──
+        st.markdown('<div class="section-header">🔍 Student Prediction</div>', unsafe_allow_html=True)
+
+        with st.container():
+            st.markdown('<div class="card card-accent">', unsafe_allow_html=True)
+
+            student_email = st.text_input(
+                "Student Gmail (to save record)",
+                placeholder="student@gmail.com",
+            )
+            if student_email and not validate_email(student_email):
+                st.error("Enter a valid student Gmail address.")
+                st.stop()
+
+            col1, col2 = st.columns(2)
+            with col1:
+                study_hours  = st.slider("📚 Study Hours / Day",    0, 8,   5)
+                social_media = st.slider("📱 Social Media Hours",   0, 10,  2)
+                part_time_job = st.selectbox("💼 Part-Time Job",    ["No", "Yes"])
+            with col2:
+                attendance   = st.slider("🏫 Attendance (%)",       0, 100, 60)
+                sleep_hours  = st.slider("😴 Sleep Hours",          4, 10,  6)
+                extracurricular = st.selectbox("⚽ Extracurricular", ["No", "Yes"])
+
+            predict_clicked = st.button("⚡ Predict Score")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # ── Prediction results (only when button clicked) ──
+        if predict_clicked:
+            ptj   = 1 if part_time_job  == "Yes" else 0
+            extra = 1 if extracurricular == "Yes" else 0
+
+            input_dict = {
+                "study_hours_per_day":          study_hours,
+                "social_media_hours":           social_media,
+                "part_time_job":                ptj,
+                "attendance_percentage":        attendance,
+                "sleep_hours":                  sleep_hours,
+                "extracurricular_participation": extra,
+            }
+
+            input_df   = pd.DataFrame([[input_dict[f] for f in features]], columns=features)
+            input_data = scaler.transform(input_df)
+
+            # All model predictions
+            all_predictions = {}
+            for name, m in models.items():
+                pred = m.predict(input_data)[0]
+                pred = max(0, min(100, pred))
+                all_predictions[name] = pred
+
+            prediction = all_predictions[best_model_name]
+
+            # Risk label
+            if prediction < 50:
+                risk = "High Risk"
+            elif prediction < 70:
+                risk = "Medium Risk"
+            else:
+                risk = "Safe"
+
+            # ── Score & Risk summary ──
+            st.markdown('<div class="section-header">📊 Prediction Results</div>', unsafe_allow_html=True)
+            risk_cls = {"Safe": "risk-safe", "Medium Risk": "risk-medium", "High Risk": "risk-high"}[risk]
+
+            r1, r2, r3 = st.columns(3)
+            with r1:
+                colour = "green" if risk == "Safe" else ("amber" if risk == "Medium Risk" else "red")
+                st.markdown(
+                    f'<div class="metric-tile {colour}">'
+                    f'<div class="val">{prediction:.1f}</div>'
+                    f'<div class="lbl">Predicted Score</div></div>',
+                    unsafe_allow_html=True,
+                )
+            with r2:
+                st.markdown(
+                    f'<div class="metric-tile">'
+                    f'<div class="val" style="font-size:1.3rem">'
+                    f'<span class="risk-badge {risk_cls}">{risk}</span></div>'
+                    f'<div class="lbl" style="margin-top:10px">Risk Level</div></div>',
+                    unsafe_allow_html=True,
+                )
+            with r3:
+                st.markdown(
+                    f'<div class="metric-tile">'
+                    f'<div class="val" style="font-size:1.1rem">{best_model_name}</div>'
+                    f'<div class="lbl">Best Model Used</div></div>',
+                    unsafe_allow_html=True,
+                )
+
+            # ── All model predictions ──
+            st.markdown('<div class="section-header">🤖 All Model Predictions</div>', unsafe_allow_html=True)
+            cards_html = '<div class="model-pred-row">'
+            for name, pred in all_predictions.items():
+                is_best = name == best_model_name
+                cards_html += (
+                    f'<div class="model-card {"best" if is_best else ""}">'
+                    f'<div class="score">{pred:.1f}</div>'
+                    f'<div class="name">{name}</div>'
+                    f'{"<div class=\'best-tag\'>★ Best</div>" if is_best else ""}'
+                    f'</div>'
+                )
+            cards_html += '</div>'
+            st.markdown(cards_html, unsafe_allow_html=True)
+
+            # ── Model comparison table ──
+            with st.expander("📋 Model Comparison Details"):
+                st.dataframe(loaded["results"], use_container_width=True)
+                st.info(
+                    f"**{best_model_name}** selected as best model — "
+                    "it achieved the lowest RMSE, indicating higher prediction accuracy."
+                )
+
+            # ── Bar chart of model predictions ──
+            fig, ax = plt.subplots(figsize=(7, 3))
+            bars = ax.bar(
+                all_predictions.keys(),
+                all_predictions.values(),
+                color=["#6366f1" if n == best_model_name else "#374151" for n in all_predictions],
+                edgecolor="none",
+                width=0.5,
+            )
+            ax.set_ylabel("Predicted Score")
+            ax.set_title("Model Prediction Comparison", color="#e8eaf0", fontweight="bold")
+            ax.set_ylim(0, 100)
+            ax.axhline(prediction, color="#10b981", linestyle="--", linewidth=1, alpha=0.6)
+            fig.tight_layout()
+            st.pyplot(fig)
+            plt.close(fig)
+
+            # ── Suggestions ──
+            st.markdown('<div class="section-header">💡 Suggestions</div>', unsafe_allow_html=True)
+            suggestions = []
+            if prediction < 60:
+                suggestions.append("Focus on studies more consistently")
+            if study_hours < 4:
+                suggestions.append("Increase study hours to at least 4 hours / day")
+            if social_media > 5:
+                suggestions.append("Reduce social media usage")
+            if attendance < 50:
+                suggestions.append("Improve class attendance urgently")
+            if sleep_hours < 6:
+                suggestions.append("Sleep at least 6–7 hours daily")
+            if not suggestions:
+                if risk == "High Risk":
+                    suggestions.append("Immediate improvement needed in study habits")
+                elif risk == "Medium Risk":
+                    suggestions.append("Try improving consistency in daily habits")
+                else:
+                    suggestions.append("Great job! Keep maintaining your routine! 🎉")
+
+            pills = "".join(f'<span class="suggestion-pill">✔ {s}</span>' for s in suggestions)
+            st.markdown(f'<div style="margin-top:8px">{pills}</div>', unsafe_allow_html=True)
+
+            # ── Save to history ──
+            if student_email:
+                if student_email not in history:
+                    history[student_email] = []
+                history[student_email].append({
+                    "score":       float(prediction),
+                    "risk":        risk,
+                    "study_hours": study_hours,
+                    "social_media": social_media,
+                    "attendance":  attendance,
+                    "sleep_hours": sleep_hours,
+                    "suggestions": suggestions,
+                })
+                save_history(history)
+                st.success(f"✅ Record saved for **{student_email}**")
+
+        # ── Class Overview (always visible to teacher) ──
+        st.markdown('<div class="section-header">📈 Class Performance Overview</div>', unsafe_allow_html=True)
+
+        all_scores = []
+        all_risks  = []
+        x_vals, y_vals, colors = [], [], []
+
+        for student in history:
+            for r in history[student]:
+                all_scores.append(r["score"])
+                all_risks.append(r["risk"])
+                x_vals.append(r["study_hours"])
+                y_vals.append(r["score"])
+                if r["risk"] == "High Risk":
+                    colors.append("#ef4444")
+                elif r["risk"] == "Medium Risk":
+                    colors.append("#f59e0b")
+                else:
+                    colors.append("#10b981")
+
+        if all_scores:
+            # Summary tiles
+            risk_counts = pd.Series(all_risks).value_counts()
+            t1, t2, t3, t4 = st.columns(4)
+            tiles = [
+                (t1, f"{np.mean(all_scores):.1f}", "Class Average", ""),
+                (t2, str(risk_counts.get("Safe", 0)),        "Safe Students",        "green"),
+                (t3, str(risk_counts.get("Medium Risk", 0)), "Medium Risk Students", "amber"),
+                (t4, str(risk_counts.get("High Risk", 0)),   "High Risk Students",   "red"),
+            ]
+            for col, val, lbl, cls in tiles:
+                with col:
+                    st.markdown(
+                        f'<div class="metric-tile {cls}">'
+                        f'<div class="val">{val}</div>'
+                        f'<div class="lbl">{lbl}</div></div>',
+                        unsafe_allow_html=True,
+                    )
+
+            # Two charts side by side
+            ch1, ch2 = st.columns(2)
+            with ch1:
+                fig1, ax1 = plt.subplots(figsize=(5, 3))
+                ax1.plot(all_scores, color="#6366f1", linewidth=2, marker="o",
+                         markersize=4, markerfacecolor="#a5b4fc")
+                ax1.fill_between(range(len(all_scores)), all_scores,
+                                 alpha=0.12, color="#6366f1")
+                ax1.set_title("Class Performance Trend", color="#e8eaf0", fontweight="bold")
+                ax1.set_xlabel("Students (chronological)")
+                ax1.set_ylabel("Score")
+                fig1.tight_layout()
+                st.pyplot(fig1)
+                plt.close(fig1)
+
+            with ch2:
+                fig2, ax2 = plt.subplots(figsize=(5, 3))
+                ax2.scatter(x_vals, y_vals, c=colors, s=80, alpha=0.75, edgecolors="none")
+                ax2.set_title("Risk Analysis: Study Hours vs Score",
+                              color="#e8eaf0", fontweight="bold")
+                ax2.set_xlabel("Study Hours / Day")
+                ax2.set_ylabel("Predicted Score")
+                patches = [
+                    mpatches.Patch(color="#10b981", label="Safe"),
+                    mpatches.Patch(color="#f59e0b", label="Medium Risk"),
+                    mpatches.Patch(color="#ef4444", label="High Risk"),
+                ]
+                ax2.legend(handles=patches, facecolor="#13151d", edgecolor="#2d2f3a",
+                           labelcolor="#9ca3af")
+                fig2.tight_layout()
+                st.pyplot(fig2)
+                plt.close(fig2)
+
+        else:
+            st.info("No student data recorded yet. Use the prediction form above to add records.")
+
+    # ══════════════════════════════════════════
+    #  STUDENT DASHBOARD
+    # ══════════════════════════════════════════
+    else:
+        st.markdown('<div class="page-title">My Dashboard</div>', unsafe_allow_html=True)
+        st.markdown('<div class="page-sub">Track your predicted performance and habits</div>', unsafe_allow_html=True)
+
+        user_data = history.get(user_email, [])
+
+        if not user_data:
+            st.markdown(
+                '<div class="card" style="text-align:center;padding:48px">'
+                '<div style="font-size:3rem">📭</div>'
+                '<div style="font-family:Syne,sans-serif;font-size:1.2rem;margin:12px 0">No records yet</div>'
+                '<div style="color:#6b7280">Your teacher hasn\'t made a prediction for you yet. Check back later.</div>'
+                '</div>',
+                unsafe_allow_html=True,
+            )
+        else:
+            latest = user_data[-1]
+            score  = latest["score"]
+            risk   = latest["risk"]
+
+            # Risk colour
+            risk_cls = {"Safe": "risk-safe", "Medium Risk": "risk-medium", "High Risk": "risk-high"}[risk]
+            score_color = "green" if risk == "Safe" else ("amber" if risk == "Medium Risk" else "red")
+
+            # ── Summary cards ──
+            st.markdown('<div class="section-header">📊 Latest Result</div>', unsafe_allow_html=True)
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                st.markdown(
+                    f'<div class="metric-tile {score_color}">'
+                    f'<div class="val">{score:.1f}</div>'
+                    f'<div class="lbl">Latest Score</div></div>',
+                    unsafe_allow_html=True,
+                )
+            with c2:
+                avg = np.mean([x["score"] for x in user_data])
+                st.markdown(
+                    f'<div class="metric-tile">'
+                    f'<div class="val">{avg:.1f}</div>'
+                    f'<div class="lbl">Average Score</div></div>',
+                    unsafe_allow_html=True,
+                )
+            with c3:
+                st.markdown(
+                    f'<div class="metric-tile">'
+                    f'<div class="val">{len(user_data)}</div>'
+                    f'<div class="lbl">Total Attempts</div></div>',
+                    unsafe_allow_html=True,
+                )
+            with c4:
+                st.markdown(
+                    f'<div class="metric-tile">'
+                    f'<div style="margin-top:6px"><span class="risk-badge {risk_cls}">{risk}</span></div>'
+                    f'<div class="lbl" style="margin-top:10px">Risk Level</div></div>',
+                    unsafe_allow_html=True,
+                )
+
+            # ── Habit snapshot ──
+            st.markdown('<div class="section-header">📋 Latest Habit Snapshot</div>', unsafe_allow_html=True)
+            h1, h2, h3, h4 = st.columns(4)
+            habit_tiles = [
+                (h1, f'{latest.get("study_hours","—")}h',   "Study Hours/Day"),
+                (h2, f'{latest.get("social_media","—")}h',  "Social Media"),
+                (h3, f'{latest.get("attendance","—")}%',     "Attendance"),
+                (h4, f'{latest.get("sleep_hours","—")}h',   "Sleep Hours"),
+            ]
+            for col, val, lbl in habit_tiles:
+                with col:
+                    st.markdown(
+                        f'<div class="metric-tile">'
+                        f'<div class="val" style="font-size:1.5rem">{val}</div>'
+                        f'<div class="lbl">{lbl}</div></div>',
+                        unsafe_allow_html=True,
+                    )
+
+            # ── Suggestions ──
+            st.markdown('<div class="section-header">💡 Suggestions</div>', unsafe_allow_html=True)
+            suggestions = latest.get("suggestions", [])
+            if not suggestions:
+                st.markdown('<span class="suggestion-pill">✔ Keep up the great work! 🎉</span>',
+                            unsafe_allow_html=True)
+            else:
+                pills = "".join(f'<span class="suggestion-pill">✔ {s}</span>' for s in suggestions)
+                st.markdown(pills, unsafe_allow_html=True)
+
+            # ── Progress chart ──
+            st.markdown('<div class="section-header">📈 Your Progress</div>', unsafe_allow_html=True)
+            scores = [x["score"] for x in user_data]
+
+            fig, ax = plt.subplots(figsize=(8, 3.5))
+            ax.plot(scores, color="#6366f1", linewidth=2.5, marker="o",
+                    markersize=6, markerfacecolor="#a5b4fc", zorder=3)
+            ax.fill_between(range(len(scores)), scores, alpha=0.1, color="#6366f1")
+            ax.axhline(70, color="#10b981", linestyle="--", linewidth=1, alpha=0.5, label="Target (70)")
+            ax.set_title("Performance Progress Over Attempts", color="#e8eaf0", fontweight="bold")
+            ax.set_xlabel("Attempt #")
+            ax.set_ylabel("Predicted Score")
+            ax.set_ylim(0, 105)
+            ax.legend(facecolor="#13151d", edgecolor="#2d2f3a", labelcolor="#9ca3af")
+            fig.tight_layout()
+            st.pyplot(fig)
+            plt.close(fig)
