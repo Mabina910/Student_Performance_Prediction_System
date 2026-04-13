@@ -1,1 +1,5 @@
-{"mabinathapa73@gmail.com": {"password": "Helloitsme!1", "role": "Teacher"}, "test@gmail.com": {"password": "Password@123", "role": "Student"}, "hello@gmail.com": {"password": "Imastudent@10", "role": "Student"}, "test1@gmail.com": {"password": "Helloitsme1!", "role": "Student"}, "mr.testing2@gmail.com": {"password": "Mrtesting*12", "role": "Student"}}
+{"mabinathapa73@gmail.com": {"password": "Helloitsme!1", "role": "Teacher"}, 
+"test@gmail.com": {"password": "Password@123", "role": "Student"}, 
+"hello@gmail.com": {"password": "Imastudent@10", "role": "Student"}, 
+"test1@gmail.com": {"password": "Helloitsme1!", "role": "Student"}, 
+"mr.testing2@gmail.com": {"password": "Mrtesting*12", "role": "Student"}}

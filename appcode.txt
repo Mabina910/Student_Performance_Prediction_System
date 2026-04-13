@@ -66,9 +66,7 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-bottom: 20px;
     backdrop-filter: blur(8px);
 }
-.card-accent {
-    border-left: 3px solid #6366f1;
-}
+.card-accent { border-left: 3px solid #6366f1; }
 
 /* ---------- Page title ---------- */
 .page-title {
@@ -136,28 +134,6 @@ html, body, [data-testid="stAppViewContainer"] {
 .metric-tile.amber .val { color: #f59e0b; }
 .metric-tile.red   .val { color: #ef4444; }
 
-/* ---------- Login card ---------- */
-.login-wrap {
-    max-width: 440px;
-    margin: 60px auto 0;
-}
-.login-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    text-align: center;
-    margin-bottom: 6px;
-    background: linear-gradient(135deg, #e8eaf0, #6366f1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.login-tagline {
-    text-align: center;
-    color: #6b7280;
-    font-size: .9rem;
-    margin-bottom: 32px;
-}
-
 /* ---------- Inputs ---------- */
 [data-testid="stTextInput"] input,
 [data-testid="stSelectbox"] div[data-baseweb="select"] {
@@ -166,10 +142,11 @@ html, body, [data-testid="stAppViewContainer"] {
     border-radius: 10px !important;
     color: #e8eaf0 !important;
     font-family: 'DM Sans', sans-serif !important;
+    transition: border-color .2s, box-shadow .2s !important;
 }
 [data-testid="stTextInput"] input:focus {
     border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,.2) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.25), 0 0 20px rgba(99,102,241,.1) !important;
 }
 label { color: #9ca3af !important; font-size: .85rem !important; }
 
@@ -185,11 +162,15 @@ label { color: #9ca3af !important; font-size: .85rem !important; }
     font-size: .95rem !important;
     padding: 12px !important;
     letter-spacing: .03em;
-    transition: opacity .2s, transform .15s;
+    transition: opacity .2s, transform .15s, box-shadow .2s !important;
 }
 [data-testid="stButton"] > button:hover {
-    opacity: .88;
-    transform: translateY(-1px);
+    opacity: .9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99,102,241,.4) !important;
+}
+[data-testid="stButton"] > button:active {
+    transform: translateY(0px) !important;
 }
 
 /* ---------- Alerts ---------- */
@@ -255,6 +236,98 @@ iframe { border-radius: 12px; }
 /* ---------- Chart background ---------- */
 .stPlotlyChart, [data-testid="stImage"] { border-radius: 12px; }
 
+/* ---------- Tab styling ---------- */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+    background: rgba(255,255,255,.04) !important;
+    border-radius: 10px !important;
+    padding: 4px !important;
+    gap: 4px !important;
+    border: 1px solid rgba(255,255,255,.07) !important;
+}
+[data-testid="stTabs"] [data-baseweb="tab"] {
+    border-radius: 8px !important;
+    color: #6b7280 !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: .88rem !important;
+    padding: 8px 20px !important;
+    transition: all .2s !important;
+}
+[data-testid="stTabs"] [aria-selected="true"] {
+    background: linear-gradient(135deg,#6366f1,#8b5cf6) !important;
+    color: #fff !important;
+}
+[data-testid="stTabs"] [data-baseweb="tab-highlight"],
+[data-testid="stTabs"] [data-baseweb="tab-border"] { display: none !important; }
+
+/* ---------- Logout button (sidebar) ---------- */
+[data-testid="stSidebar"] [data-testid="stButton"] > button {
+    background: rgba(239,68,68,.15) !important;
+    color: #fca5a5 !important;
+    border: 1px solid rgba(239,68,68,.3) !important;
+    font-size: .85rem !important;
+}
+
+/* ---------- Dashboard logout buttons ---------- */
+button[kind="secondary"]:has(div:contains("Logout")),
+[data-testid="stButton"]:has(button[key="teacher_logout"]) > button,
+[data-testid="stButton"]:has(button[key="student_logout"]) > button {
+    background: rgba(239,68,68,.12) !important;
+    color: #fca5a5 !important;
+    border: 1px solid rgba(239,68,68,.25) !important;
+    font-size: .82rem !important;
+    padding: 8px !important;
+}
+
+/* ---------- Role selector buttons styled as cards ---------- */
+div[data-testid="stButton"]:has(> button[key="l_student_btn"]) > button,
+div[data-testid="stButton"]:has(> button[key="l_teacher_btn"]) > button,
+div[data-testid="stButton"]:has(> button[key="s_student_btn"]) > button,
+div[data-testid="stButton"]:has(> button[key="s_teacher_btn"]) > button {
+    background: rgba(255,255,255,.04) !important;
+    border: 1.5px solid rgba(255,255,255,.12) !important;
+    border-radius: 14px !important;
+    padding: 20px 10px !important;
+    height: 90px !important;
+    font-family: 'Syne', sans-serif !important;
+    font-size: .8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em !important;
+    color: #9ca3af !important;
+    text-transform: uppercase !important;
+    transition: all .25s cubic-bezier(.22,1,.36,1) !important;
+    box-shadow: none !important;
+}
+div[data-testid="stButton"]:has(> button[key="l_student_btn"]) > button:hover,
+div[data-testid="stButton"]:has(> button[key="l_teacher_btn"]) > button:hover,
+div[data-testid="stButton"]:has(> button[key="s_student_btn"]) > button:hover,
+div[data-testid="stButton"]:has(> button[key="s_teacher_btn"]) > button:hover {
+    border-color: rgba(99,102,241,.6) !important;
+    background: rgba(99,102,241,.08) !important;
+    color: #a5b4fc !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(99,102,241,.2) !important;
+}
+
+/* ---------- Active role button (selected state) ---------- */
+div[data-testid="stButton"]:has(> button[key="l_student_active"]) > button,
+div[data-testid="stButton"]:has(> button[key="l_teacher_active"]) > button,
+div[data-testid="stButton"]:has(> button[key="s_student_active"]) > button,
+div[data-testid="stButton"]:has(> button[key="s_teacher_active"]) > button {
+    background: rgba(99,102,241,.15) !important;
+    border: 1.5px solid #6366f1 !important;
+    color: #a5b4fc !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15), 0 6px 20px rgba(99,102,241,.25) !important;
+    height: 90px !important;
+    border-radius: 14px !important;
+    padding: 20px 10px !important;
+    font-family: 'Syne', sans-serif !important;
+    font-size: .8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+}
+
 /* ---------- Prediction model cards ---------- */
 .model-pred-row { display: flex; gap: 12px; flex-wrap: wrap; }
 .model-card {
@@ -290,6 +363,213 @@ iframe { border-radius: 12px; }
     padding: 2px 6px;
     margin-top: 6px;
     display: inline-block;
+}
+
+/* =====================================================
+   LOGIN PAGE — ADVANCED STYLES
+   ===================================================== */
+
+/* Animated particle canvas background (login only) */
+#login-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Entrance animation */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+    50%       { box-shadow: 0 0 0 6px rgba(99,102,241,.12); }
+}
+@keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+}
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Login form wrapper with entrance */
+.login-anim {
+    animation: fadeSlideUp .6s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* Floating logo icon */
+.login-icon {
+    display: block;
+    text-align: center;
+    font-size: 3.2rem;
+    animation: float 3.5s ease-in-out infinite;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 20px rgba(99,102,241,.5));
+}
+
+/* Logo text */
+.login-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    background: linear-gradient(135deg, #e8eaf0 20%, #a5b4fc 60%, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -.02em;
+    line-height: 1;
+}
+
+/* Tagline with shimmer effect */
+.login-tagline {
+    text-align: center;
+    font-size: .88rem;
+    font-weight: 400;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: transparent;
+    background: linear-gradient(90deg,
+        #374151 0%, #6b7280 30%, #a5b4fc 50%, #6b7280 70%, #374151 100%);
+    background-size: 400px 100%;
+    -webkit-background-clip: text;
+    animation: shimmer 3s linear infinite;
+    margin-top: 8px;
+}
+
+/* Divider */
+.login-divider {
+    width: 56px; height: 2px;
+    background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, transparent);
+    margin: 16px auto 28px;
+    border-radius: 2px;
+}
+
+/* Role selector cards */
+.role-cards {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.role-card {
+    flex: 1;
+    background: rgba(255,255,255,.04);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    overflow: hidden;
+}
+.role-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(139,92,246,.08));
+    opacity: 0;
+    transition: opacity .25s;
+}
+.role-card:hover::before { opacity: 1; }
+.role-card:hover {
+    border-color: rgba(99,102,241,.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99,102,241,.2);
+}
+.role-card.active {
+    border-color: #6366f1;
+    background: rgba(99,102,241,.12);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15), 0 8px 24px rgba(99,102,241,.2);
+    animation: pulseBorder 2.5s ease-in-out infinite;
+}
+.role-card.active::before { opacity: 1; }
+.role-icon { font-size: 1.8rem; display: block; margin-bottom: 5px; }
+.role-label {
+    font-family: 'Syne', sans-serif;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #9ca3af;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+.role-card.active .role-label { color: #a5b4fc; }
+
+/* Password strength bar */
+.pw-strength-wrap { margin-top: 8px; margin-bottom: 4px; }
+.pw-strength-bar {
+    height: 4px;
+    border-radius: 4px;
+    transition: width .4s ease, background .4s ease;
+    margin-bottom: 4px;
+}
+.pw-strength-label {
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+/* Checklist items */
+.pw-checklist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+.pw-check {
+    font-size: .72rem;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
+    color: #6b7280;
+    transition: all .2s;
+}
+.pw-check.ok {
+    background: rgba(16,185,129,.12);
+    border-color: rgba(16,185,129,.3);
+    color: #6ee7b7;
+}
+
+/* Stats strip below form */
+.login-stats {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,.05);
+}
+.login-stat-item { text-align: center; }
+.login-stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #e8eaf0, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.login-stat-lbl {
+    font-size: .68rem;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-top: 2px;
+}
+
+/* Footer */
+.login-footer {
+    text-align: center;
+    color: #1f2937;
+    font-size: .72rem;
+    margin-top: 20px;
+    letter-spacing: .04em;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -375,67 +655,254 @@ if "logged_in" not in st.session_state:
 # ─────────────────────────────────────────────
 if not st.session_state.logged_in:
 
-    # Centered column
-    _, col, _ = st.columns([1, 1.4, 1])
+    # ── Animated particle canvas (injected once) ──
+    st.markdown("""
+    <canvas id="login-bg"></canvas>
+    <script>
+    (function() {
+        const canvas = document.getElementById('login-bg');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+
+        function resize() {
+            W = canvas.width  = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const COLORS = ['rgba(99,102,241,', 'rgba(139,92,246,', 'rgba(16,185,129,'];
+        for (let i = 0; i < 55; i++) {
+            particles.push({
+                x:  Math.random() * 1400,
+                y:  Math.random() * 900,
+                r:  Math.random() * 1.8 + .4,
+                dx: (Math.random() - .5) * .35,
+                dy: (Math.random() - .5) * .35,
+                c:  COLORS[Math.floor(Math.random() * COLORS.length)],
+                a:  Math.random() * .5 + .1,
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.c + p.a + ')';
+                ctx.fill();
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+                if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+            });
+            // draw faint connection lines
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i+1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = 'rgba(99,102,241,' + (.12 * (1 - dist/120)) + ')';
+                        ctx.lineWidth = .5;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+    </script>
+    """, unsafe_allow_html=True)
+
+    # ── Init session state for role selection ──
+    if "login_role" not in st.session_state:
+        st.session_state.login_role = "Student"
+    if "signup_role" not in st.session_state:
+        st.session_state.signup_role = "Student"
+
+    _, col, _ = st.columns([1, 1.3, 1])
     with col:
-        st.markdown('<div class="login-logo">🎓 EduPredict</div>', unsafe_allow_html=True)
-        st.markdown('<div class="login-tagline">Predict. Improve. Succeed.</div>', unsafe_allow_html=True)
+        # ── Animated logo header ──
+        st.markdown("""
+        <div class="login-anim" style="text-align:center; margin-bottom:24px;">
+            <span class="login-icon">🎓</span>
+            <div class="login-brand">EduPredict</div>
+            <div class="login-tagline">Predict &nbsp;·&nbsp; Improve &nbsp;·&nbsp; Succeed</div>
+            <div class="login-divider"></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        with st.container():
-            st.markdown('<div class="card">', unsafe_allow_html=True)
+        # ── Tabs ──
+        tab_login, tab_signup = st.tabs(["🔑  Login", "✨  Sign Up"])
 
-            tab_login, tab_signup = st.tabs(["🔑  Login", "✨  Sign Up"])
+        # ══ LOGIN TAB ══
+        with tab_login:
+            st.markdown("<br>", unsafe_allow_html=True)
 
-            # ── LOGIN TAB ──
-            with tab_login:
-                st.markdown("<br>", unsafe_allow_html=True)
-                role_l  = st.selectbox("Role", ["Student", "Teacher"], key="role_l")
-                email_l = st.text_input("Gmail address", placeholder="you@gmail.com", key="email_l")
-                pass_l  = st.text_input("Password", type="password", key="pass_l")
-                st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("Login →", key="btn_login"):
-                    users = load_users()
-                    if not validate_email(email_l):
-                        st.error("Please enter a valid Gmail address.")
-                    elif email_l not in users:
-                        st.error("Account not found. Please sign up first.")
-                    elif users[email_l]["password"] != pass_l:
-                        st.error("Incorrect password.")
-                    else:
-                        st.session_state.logged_in   = True
-                        st.session_state.user_email  = email_l
-                        st.rerun()
+            # Role selector — styled Streamlit buttons (no HTML overlay)
+            st.markdown('<p style="color:#9ca3af;font-size:.82rem;margin-bottom:8px;letter-spacing:.06em;">SELECT YOUR ROLE</p>',
+                        unsafe_allow_html=True)
+            rc1, rc2 = st.columns(2)
+            with rc1:
+                is_active = st.session_state.login_role == "Student"
+                key = "l_student_active" if is_active else "l_student_btn"
+                if st.button("👨‍🎓\n\nStudent", key=key, use_container_width=True):
+                    st.session_state.login_role = "Student"
+                    st.rerun()
+            with rc2:
+                is_active = st.session_state.login_role == "Teacher"
+                key = "l_teacher_active" if is_active else "l_teacher_btn"
+                if st.button("👩‍🏫\n\nTeacher", key=key, use_container_width=True):
+                    st.session_state.login_role = "Teacher"
+                    st.rerun()
 
-            # ── SIGNUP TAB ──
-            with tab_signup:
-                st.markdown("<br>", unsafe_allow_html=True)
-                role_s  = st.selectbox("Role", ["Student", "Teacher"], key="role_s")
-                email_s = st.text_input("Gmail address", placeholder="you@gmail.com", key="email_s")
-                pass_s  = st.text_input("Password", type="password", key="pass_s",
-                                        help="Min 8 chars · 1 uppercase · 1 number · 1 special (!@#$%^&*)")
-                st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("Create Account →", key="btn_signup"):
-                    users = load_users()
-                    if not validate_email(email_s):
-                        st.error("Please enter a valid Gmail address.")
-                    elif not validate_password(pass_s):
-                        st.error("Weak password — need 8+ chars, uppercase, number, special char.")
-                    elif email_s in users:
-                        st.error("This email is already registered. Try logging in.")
-                    else:
-                        users[email_s] = {"password": pass_s, "role": role_s}
-                        save_users(users)
-                        st.session_state.logged_in  = True
-                        st.session_state.user_email = email_s
-                        st.rerun()
+            st.markdown(
+                f'<p style="color:#6366f1;font-size:.8rem;margin:10px 0 14px;font-weight:600;">'
+                f'✓ Logging in as: {st.session_state.login_role}</p>',
+                unsafe_allow_html=True,
+            )
 
-            st.markdown('</div>', unsafe_allow_html=True)
+            email_l = st.text_input("📧 Gmail address", placeholder="you@gmail.com", key="email_l")
+            pass_l  = st.text_input("🔒 Password", type="password", key="pass_l")
 
-        st.markdown(
-            '<p style="text-align:center;color:#374151;font-size:.78rem;margin-top:24px;">'
-            'EduPredict · Student Performance Analytics</p>',
-            unsafe_allow_html=True,
-        )
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("Login  →", key="btn_login", use_container_width=True):
+                users = load_users()
+                if not validate_email(email_l):
+                    st.error("⚠ Please enter a valid Gmail address.")
+                elif email_l not in users:
+                    st.error("⚠ Account not found. Please sign up first.")
+                elif users[email_l]["password"] != pass_l:
+                    st.error("⚠ Incorrect password.")
+                else:
+                    st.session_state.logged_in  = True
+                    st.session_state.user_email = email_l
+                    st.rerun()
+
+            st.markdown(
+                '<p style="text-align:center;color:#374151;font-size:.76rem;margin-top:14px;">'
+                "Don't have an account? Switch to Sign Up ↑</p>",
+                unsafe_allow_html=True,
+            )
+
+        # ══ SIGNUP TAB ══
+        with tab_signup:
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Role selector — styled Streamlit buttons (no HTML overlay)
+            st.markdown('<p style="color:#9ca3af;font-size:.82rem;margin-bottom:8px;letter-spacing:.06em;">SELECT YOUR ROLE</p>',
+                        unsafe_allow_html=True)
+            sc1, sc2 = st.columns(2)
+            with sc1:
+                is_active = st.session_state.signup_role == "Student"
+                key = "s_student_active" if is_active else "s_student_btn"
+                if st.button("👨‍🎓\n\nStudent", key=key, use_container_width=True):
+                    st.session_state.signup_role = "Student"
+                    st.rerun()
+            with sc2:
+                is_active = st.session_state.signup_role == "Teacher"
+                key = "s_teacher_active" if is_active else "s_teacher_btn"
+                if st.button("👩‍🏫\n\nTeacher", key=key, use_container_width=True):
+                    st.session_state.signup_role = "Teacher"
+                    st.rerun()
+
+            st.markdown(
+                f'<p style="color:#6366f1;font-size:.8rem;margin:10px 0 14px;font-weight:600;">'
+                f'✓ Signing up as: {st.session_state.signup_role}</p>',
+                unsafe_allow_html=True,
+            )
+
+            email_s = st.text_input("📧 Gmail address", placeholder="you@gmail.com", key="email_s")
+            pass_s  = st.text_input("🔒 Password", type="password", key="pass_s")
+
+            # ── Live password strength indicator ──
+            if pass_s:
+                has_len   = len(pass_s) >= 8
+                has_upper = bool(re.search(r"[A-Z]", pass_s))
+                has_num   = bool(re.search(r"[0-9]", pass_s))
+                has_spec  = bool(re.search(r"[!@#$%^&*]", pass_s))
+                score     = sum([has_len, has_upper, has_num, has_spec])
+
+                bar_configs = {
+                    1: ("#ef4444", "25%",  "Weak"),
+                    2: ("#f59e0b", "50%",  "Fair"),
+                    3: ("#6366f1", "75%",  "Good"),
+                    4: ("#10b981", "100%", "Strong ✓"),
+                }
+                color, width, label = bar_configs.get(score, ("#ef4444", "10%", "Too short"))
+
+                def check_html(ok, text):
+                    cls = "ok" if ok else ""
+                    return f'<span class="pw-check {cls}">{text}</span>'
+
+                st.markdown(f"""
+                <div class="pw-strength-wrap">
+                    <div style="background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;">
+                        <div class="pw-strength-bar"
+                             style="width:{width};background:{color};"></div>
+                    </div>
+                    <span class="pw-strength-label" style="color:{color};">{label}</span>
+                    <div class="pw-checklist">
+                        {check_html(has_len,   "8+ chars")}
+                        {check_html(has_upper, "Uppercase")}
+                        {check_html(has_num,   "Number")}
+                        {check_html(has_spec,  "Special (!@#...)")}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    '<p style="color:#374151;font-size:.76rem;margin-top:4px;">'
+                    'Min 8 chars · uppercase · number · special (!@#$%^&*)</p>',
+                    unsafe_allow_html=True,
+                )
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("Create Account  →", key="btn_signup", use_container_width=True):
+                users = load_users()
+                if not validate_email(email_s):
+                    st.error("⚠ Please enter a valid Gmail address.")
+                elif not validate_password(pass_s):
+                    st.error("⚠ Weak password — need 8+ chars, uppercase, number & special char.")
+                elif email_s in users:
+                    st.error("⚠ This email is already registered. Try logging in.")
+                else:
+                    users[email_s] = {"password": pass_s, "role": st.session_state.signup_role}
+                    save_users(users)
+                    st.session_state.logged_in  = True
+                    st.session_state.user_email = email_s
+                    st.rerun()
+
+            st.markdown(
+                '<p style="text-align:center;color:#374151;font-size:.76rem;margin-top:14px;">'
+                "Already have an account? Switch to Login ↑</p>",
+                unsafe_allow_html=True,
+            )
+
+        # ── Stats strip ──
+        users_count = len(load_users())
+        st.markdown(f"""
+        <div class="login-stats">
+            <div class="login-stat-item">
+                <div class="login-stat-val">{users_count}</div>
+                <div class="login-stat-lbl">Users</div>
+            </div>
+            <div class="login-stat-item">
+                <div class="login-stat-val">3</div>
+                <div class="login-stat-lbl">ML Models</div>
+            </div>
+            <div class="login-stat-item">
+                <div class="login-stat-val">6</div>
+                <div class="login-stat-lbl">Features</div>
+            </div>
+        </div>
+        <div class="login-footer">EduPredict · Student Performance Analytics</div>
+        """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  MAIN APP (logged in)
@@ -470,35 +937,38 @@ else:
     # ══════════════════════════════════════════
     if role == "Teacher":
 
-        st.markdown('<div class="page-title">Teacher Dashboard</div>', unsafe_allow_html=True)
-        st.markdown('<div class="page-sub">Predict and track student exam performance</div>', unsafe_allow_html=True)
+        _t1, _t2 = st.columns([5, 1])
+        with _t1:
+            st.markdown('<div class="page-title">Teacher Dashboard</div>', unsafe_allow_html=True)
+            st.markdown('<div class="page-sub">Predict and track student exam performance</div>', unsafe_allow_html=True)
+        with _t2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("⇠ Logout", key="teacher_logout", use_container_width=True):
+                st.session_state.logged_in = False
+                st.rerun()
 
         # ── Input Form ──
         st.markdown('<div class="section-header">🔍 Student Prediction</div>', unsafe_allow_html=True)
 
-        with st.container():
-            st.markdown('<div class="card card-accent">', unsafe_allow_html=True)
+        student_email = st.text_input(
+            "Student Gmail (to save record)",
+            placeholder="student@gmail.com",
+        )
+        if student_email and not validate_email(student_email):
+            st.error("Enter a valid student Gmail address.")
+            st.stop()
 
-            student_email = st.text_input(
-                "Student Gmail (to save record)",
-                placeholder="student@gmail.com",
-            )
-            if student_email and not validate_email(student_email):
-                st.error("Enter a valid student Gmail address.")
-                st.stop()
+        col1, col2 = st.columns(2)
+        with col1:
+            study_hours     = st.slider("📚 Study Hours / Day",  0, 8,   5)
+            social_media    = st.slider("📱 Social Media Hours", 0, 10,  2)
+            part_time_job   = st.selectbox("💼 Part-Time Job",   ["No", "Yes"])
+        with col2:
+            attendance      = st.slider("🏫 Attendance (%)",     0, 100, 60)
+            sleep_hours     = st.slider("😴 Sleep Hours",        4, 10,  6)
+            extracurricular = st.selectbox("⚽ Extracurricular", ["No", "Yes"])
 
-            col1, col2 = st.columns(2)
-            with col1:
-                study_hours  = st.slider("📚 Study Hours / Day",    0, 8,   5)
-                social_media = st.slider("📱 Social Media Hours",   0, 10,  2)
-                part_time_job = st.selectbox("💼 Part-Time Job",    ["No", "Yes"])
-            with col2:
-                attendance   = st.slider("🏫 Attendance (%)",       0, 100, 60)
-                sleep_hours  = st.slider("😴 Sleep Hours",          4, 10,  6)
-                extracurricular = st.selectbox("⚽ Extracurricular", ["No", "Yes"])
-
-            predict_clicked = st.button("⚡ Predict Score")
-            st.markdown('</div>', unsafe_allow_html=True)
+        predict_clicked = st.button("⚡ Predict Score")
 
         # ── Prediction results (only when button clicked) ──
         if predict_clicked:
@@ -578,13 +1048,18 @@ else:
             cards_html += '</div>'
             st.markdown(cards_html, unsafe_allow_html=True)
 
-            # ── Model comparison table ──
-            with st.expander("📋 Model Comparison Details"):
-                st.dataframe(loaded["results"], use_container_width=True)
-                st.info(
-                    f"**{best_model_name}** selected as best model — "
-                    "it achieved the lowest RMSE, indicating higher prediction accuracy."
-                )
+            # ── Model comparison table (always visible, styled) ──
+            st.markdown('<div class="section-header">📋 Model Comparison</div>', unsafe_allow_html=True)
+            st.dataframe(
+                loaded["results"].style.highlight_min(subset=["rmse"], color="#1a2a1a")
+                                       .highlight_max(subset=["r2"],   color="#1a2a1a")
+                                       .format({"rmse": "{:.4f}", "r2": "{:.4f}"}),
+                use_container_width=True,
+            )
+            st.info(
+                f"**{best_model_name}** selected as best model — "
+                "it achieved the lowest RMSE (highlighted), indicating the highest prediction accuracy."
+            )
 
             # ── Bar chart of model predictions ──
             fig, ax = plt.subplots(figsize=(7, 3))
@@ -646,32 +1121,53 @@ else:
         # ── Class Overview (always visible to teacher) ──
         st.markdown('<div class="section-header">📈 Class Performance Overview</div>', unsafe_allow_html=True)
 
-        all_scores = []
-        all_risks  = []
-        x_vals, y_vals, colors = [], [], []
+        if history:
+            # ── Build one row per STUDENT (average score → overall risk) ──
+            student_summary = {}
+            for email, records in history.items():
+                if not records:
+                    continue
+                scores_list   = [r["score"] for r in records]
+                avg_score     = np.mean(scores_list)
+                latest_record = records[-1]
 
-        for student in history:
-            for r in history[student]:
-                all_scores.append(r["score"])
-                all_risks.append(r["risk"])
-                x_vals.append(r["study_hours"])
-                y_vals.append(r["score"])
-                if r["risk"] == "High Risk":
-                    colors.append("#ef4444")
-                elif r["risk"] == "Medium Risk":
-                    colors.append("#f59e0b")
+                if avg_score < 50:
+                    overall_risk = "High Risk"
+                elif avg_score < 70:
+                    overall_risk = "Medium Risk"
                 else:
-                    colors.append("#10b981")
+                    overall_risk = "Safe"
 
-        if all_scores:
-            # Summary tiles
-            risk_counts = pd.Series(all_risks).value_counts()
+                # Count how many times each risk appeared across all records
+                risk_counts_student = {"Safe": 0, "Medium Risk": 0, "High Risk": 0}
+                for r in records:
+                    risk_counts_student[r["risk"]] = risk_counts_student.get(r["risk"], 0) + 1
+
+                student_summary[email] = {
+                    "avg_score":    round(avg_score, 1),
+                    "latest_score": round(scores_list[-1], 1),
+                    "attempts":     len(records),
+                    "overall_risk": overall_risk,
+                    "safe_count":   risk_counts_student["Safe"],
+                    "medium_count": risk_counts_student["Medium Risk"],
+                    "high_count":   risk_counts_student["High Risk"],
+                    "study_hours":  latest_record.get("study_hours", "—"),
+                    "attendance":   latest_record.get("attendance",  "—"),
+                    "sleep_hours":  latest_record.get("sleep_hours", "—"),
+                }
+
+            safe_students   = {e: d for e, d in student_summary.items() if d["overall_risk"] == "Safe"}
+            medium_students = {e: d for e, d in student_summary.items() if d["overall_risk"] == "Medium Risk"}
+            high_students   = {e: d for e, d in student_summary.items() if d["overall_risk"] == "High Risk"}
+            all_avgs        = [d["avg_score"] for d in student_summary.values()]
+
+            # ── Summary tiles (per STUDENT, not per prediction) ──
             t1, t2, t3, t4 = st.columns(4)
             tiles = [
-                (t1, f"{np.mean(all_scores):.1f}", "Class Average", ""),
-                (t2, str(risk_counts.get("Safe", 0)),        "Safe Students",        "green"),
-                (t3, str(risk_counts.get("Medium Risk", 0)), "Medium Risk Students", "amber"),
-                (t4, str(risk_counts.get("High Risk", 0)),   "High Risk Students",   "red"),
+                (t1, f"{np.mean(all_avgs):.1f}", "Class Avg Score",        ""),
+                (t2, str(len(safe_students)),     "Safe Students",          "green"),
+                (t3, str(len(medium_students)),   "Medium Risk Students",   "amber"),
+                (t4, str(len(high_students)),     "High Risk Students",     "red"),
             ]
             for col, val, lbl, cls in tiles:
                 with col:
@@ -682,32 +1178,91 @@ else:
                         unsafe_allow_html=True,
                     )
 
-            # Two charts side by side
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # ── Per-category expandable student lists ──
+            def student_detail_table(students_dict, risk_label, border_color):
+                if not students_dict:
+                    st.caption(f"No {risk_label} students.")
+                    return
+                rows = []
+                for email, d in students_dict.items():
+                    rows.append({
+                        "Student Email":    email,
+                        "Avg Score":        d["avg_score"],
+                        "Latest Score":     d["latest_score"],
+                        "Attempts":         d["attempts"],
+                        "✅ Safe Pred.":    d["safe_count"],
+                        "🟡 Medium Pred.":  d["medium_count"],
+                        "🔴 High Pred.":    d["high_count"],
+                        "Study Hrs (last)": d["study_hours"],
+                        "Attendance (last)":d["attendance"],
+                        "Sleep Hrs (last)": d["sleep_hours"],
+                    })
+                df_display = pd.DataFrame(rows)
+                st.dataframe(df_display, use_container_width=True, hide_index=True)
+
+            exp1, exp2, exp3 = st.columns(3)
+
+            with exp1:
+                with st.expander(f"✅ Safe Students ({len(safe_students)})", expanded=False):
+                    student_detail_table(safe_students, "Safe", "#10b981")
+
+            with exp2:
+                with st.expander(f"🟡 Medium Risk Students ({len(medium_students)})", expanded=False):
+                    student_detail_table(medium_students, "Medium Risk", "#f59e0b")
+
+            with exp3:
+                with st.expander(f"🔴 High Risk Students ({len(high_students)})", expanded=False):
+                    student_detail_table(high_students, "High Risk", "#ef4444")
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # ── Two charts ──
+            # Collect per-prediction data for scatter (study hours vs score)
+            x_vals, y_vals, colors_scatter = [], [], []
+            trend_scores = []
+            for email, records in history.items():
+                for r in records:
+                    trend_scores.append(r["score"])
+                    x_vals.append(r.get("study_hours", 0))
+                    y_vals.append(r["score"])
+                    overall = student_summary[email]["overall_risk"]
+                    if overall == "High Risk":
+                        colors_scatter.append("#ef4444")
+                    elif overall == "Medium Risk":
+                        colors_scatter.append("#f59e0b")
+                    else:
+                        colors_scatter.append("#10b981")
+
             ch1, ch2 = st.columns(2)
             with ch1:
                 fig1, ax1 = plt.subplots(figsize=(5, 3))
-                ax1.plot(all_scores, color="#6366f1", linewidth=2, marker="o",
+                ax1.plot(trend_scores, color="#6366f1", linewidth=2, marker="o",
                          markersize=4, markerfacecolor="#a5b4fc")
-                ax1.fill_between(range(len(all_scores)), all_scores,
+                ax1.fill_between(range(len(trend_scores)), trend_scores,
                                  alpha=0.12, color="#6366f1")
+                ax1.axhline(70, color="#10b981", linestyle="--", linewidth=1,
+                            alpha=0.5, label="Target (70)")
                 ax1.set_title("Class Performance Trend", color="#e8eaf0", fontweight="bold")
-                ax1.set_xlabel("Students (chronological)")
+                ax1.set_xlabel("Predictions (chronological)")
                 ax1.set_ylabel("Score")
+                ax1.legend(facecolor="#13151d", edgecolor="#2d2f3a", labelcolor="#9ca3af")
                 fig1.tight_layout()
                 st.pyplot(fig1)
                 plt.close(fig1)
 
             with ch2:
                 fig2, ax2 = plt.subplots(figsize=(5, 3))
-                ax2.scatter(x_vals, y_vals, c=colors, s=80, alpha=0.75, edgecolors="none")
+                ax2.scatter(x_vals, y_vals, c=colors_scatter, s=80, alpha=0.75, edgecolors="none")
                 ax2.set_title("Risk Analysis: Study Hours vs Score",
                               color="#e8eaf0", fontweight="bold")
                 ax2.set_xlabel("Study Hours / Day")
                 ax2.set_ylabel("Predicted Score")
                 patches = [
-                    mpatches.Patch(color="#10b981", label="Safe"),
-                    mpatches.Patch(color="#f59e0b", label="Medium Risk"),
-                    mpatches.Patch(color="#ef4444", label="High Risk"),
+                    mpatches.Patch(color="#10b981", label="Safe (overall)"),
+                    mpatches.Patch(color="#f59e0b", label="Medium Risk (overall)"),
+                    mpatches.Patch(color="#ef4444", label="High Risk (overall)"),
                 ]
                 ax2.legend(handles=patches, facecolor="#13151d", edgecolor="#2d2f3a",
                            labelcolor="#9ca3af")
@@ -722,8 +1277,15 @@ else:
     #  STUDENT DASHBOARD
     # ══════════════════════════════════════════
     else:
-        st.markdown('<div class="page-title">My Dashboard</div>', unsafe_allow_html=True)
-        st.markdown('<div class="page-sub">Track your predicted performance and habits</div>', unsafe_allow_html=True)
+        _s1, _s2 = st.columns([5, 1])
+        with _s1:
+            st.markdown('<div class="page-title">My Dashboard</div>', unsafe_allow_html=True)
+            st.markdown('<div class="page-sub">Track your predicted performance and habits</div>', unsafe_allow_html=True)
+        with _s2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("⇠ Logout", key="student_logout", use_container_width=True):
+                st.session_state.logged_in = False
+                st.rerun()
 
         user_data = history.get(user_email, [])
 
