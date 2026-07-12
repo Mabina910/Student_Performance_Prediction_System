@@ -44,9 +44,21 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stDecoration"] { display: none; }
 
 [data-testid="stSidebar"] {
-    background: #0d0f14 !important;
-    border-right: 1px solid rgba(255,255,255,.07) !important;
-    padding-top: 0 !important;
+    background: #13151d !important;
+    border-right: 1px solid rgba(255,255,255,.09) !important;
+    min-width:220px !important;
+}
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] div,
+[data-testid="stSidebar"] label { color: #c8cad4 !important; }
+ 
+
+[data-testid="collapsedControl"] {
+    color: #6366f1 !important;
+    background: rgba(99,102,241,.15) !important;
+    border-radius: 0 8px 8px 0 !important;
 }
 [data-testid="stSidebar"] * { color: #c8cad4 !important; }
 [data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; }
@@ -55,7 +67,7 @@ html, body, [data-testid="stAppViewContainer"] {
     font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
     color: #374151; padding: 16px 16px 6px; font-weight: 600;
 }
-.sidebar-brand { padding: 24px 16px 20px; border-bottom: 1px solid rgba(255,255,255,.06); margin-bottom: 8px; }
+.sidebar-brand { padding: 24px 16px 20px; border-bottom: 1px solid rgba(255,255,255,.06); margin-bottom: 8px;background:#13151d; }
 .sidebar-brand-title {
     font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
     background: linear-gradient(135deg, #e8eaf0 30%, #6366f1);
