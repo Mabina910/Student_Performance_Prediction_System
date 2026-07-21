@@ -21,31 +21,42 @@ def get_base64(path):
         return base64.b64encode(f.read()).decode()
 
 bg_image = get_base64("classroom.jfif")
+if not st.session_state.get("logged_in", False) and not st.session_state.get("show_auth", False):
+    st.markdown(
+        f"""
+        <style>
 
-st.markdown(
-    f"""
-    <style>
+        [data-testid="stAppViewContainer"] {{
+            background:
+            linear-gradient(
+                90deg,
+                rgba(9,25,43,.85) 0%,
+                rgba(9,25,43,.65) 35%,
+                rgba(9,25,43,.20) 70%,
+                rgba(9,25,43,.10) 100%
+            ),
+            url("data:image/jfif;base64,{bg_image}");
 
-    [data-testid="stAppViewContainer"] {{
-        background:
-        linear-gradient(
-            90deg,
-            rgba(9,25,43,.85) 0%,
-            rgba(9,25,43,.65) 35%,
-            rgba(9,25,43,.20) 70%,
-            rgba(9,25,43,.10) 100%
-        ),
-        url("data:image/jfif;base64,{bg_image}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }}
 
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }}
-
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        """
+        <style>
+        [data-testid="stAppViewContainer"] {
+            background: #F1F5F9;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Merriweather:wght@700&display=swap');
@@ -103,15 +114,28 @@ footer {
     box-shadow:0 18px 35px rgba(0,0,0,.15);
 }
 .card-accent { border-left: 3px solid #1E3A5F; } 
-
+[data-testid="stExpander"] summary {
+    color: #1E3A5F !important;
+}
+[data-testid="stExpander"] summary p {
+    color: #1E3A5F !important;
+}
+[data-testid="stExpanderToggleIcon"] {
+    color: #1E3A5F !important;
+    fill: #1E3A5F !important;
+}
+[data-testid="stExpander"] {
+    background: white !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 12px !important;
+}
 .section-header{
     font-size:1.25rem;
     font-weight:700;
-    color:#ffffff;
+    color:#1E3A5F;
     margin:25px 0 18px;
     padding-left:14px;
     border-left:5px solid #0D9488;
-    text-shadow: 0 1px 4px rgba(0,0,0,.7);
 }
 .section-header::after { content: ""; flex: 1; height: 1px; background:#DDE5EC; }
 
@@ -175,7 +199,7 @@ caret-color:#2563EB !important;
     color:#111827 !important;
 }
 
-label { color: #ffffff !important; font-weight:700 !important;text-shadow: 0 1px 4px rgba(0,0,0,.75) !important; }
+label { color: #374151 !important; font-weight:600 !important; }
 
 [data-testid="stButton"] > button {
     width: 100%;
@@ -189,9 +213,6 @@ label { color: #ffffff !important; font-weight:700 !important;text-shadow: 0 1px
 [data-testid="stButton"] > button:active { transform: translateY(0px) !important; }
 
 [data-testid="stSuccess"] { background: #ECFDF5 !important; border-left: 3px solid #10b981 !important; border-radius: 10px !important; color: #065F46 !important; }
-[data-testid="stInfo"]    { background: #EEF5FB !important; border-left: 4px solid #1E3A5F !important; border-radius: 10px !important; color: white !important; }
-[data-testid="stInfo"] p  { color: white !important; }
-[data-testid="stInfo"] * { color: white !important; }
 [data-testid="stWarning"] { background: rgba(245,158,11,.10) !important; border-left: 3px solid #f59e0b !important; border-radius: 10px !important; color: #fcd34d !important; }
 [data-testid="stError"]   { background: rgba(239,68,68,.10) !important; border-left: 3px solid #ef4444 !important; border-radius: 10px !important; color: #fca5a5 !important; }
 
@@ -283,11 +304,10 @@ label { color: #ffffff !important; font-weight:700 !important;text-shadow: 0 1px
 font-family:'Merriweather',serif;
 font-size:2.5rem;
 font-weight:700;
-color:white !important;
-text-shadow:0 3px 10px rgba(0,0,0,.45);
+color:#1E3A5F !important;
 }
 .login-tagline {
-    text-align: center; font-size: .88rem; letter-spacing: .18em; text-transform: uppercase;color:#E5E7EB;
+    text-align: center; font-size: .88rem; letter-spacing: .18em; text-transform: uppercase;color:#647488;
 }
 .login-divider { width: 56px; height: 2px; background:#60A5FA; margin: 16px auto 28px; border-radius: 2px; }
 .pw-strength-wrap { margin-top: 8px; margin-bottom: 4px; }
@@ -299,9 +319,9 @@ border:2px solid #DDE5EC !important; color: #6b7280; }
 .pw-check.ok { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); color: #2E8B57; }
 .login-stats { display: flex; justify-content: center; gap: 28px; margin-top: 28px; padding-top: 20px; border-top: 1px solid #E5E7EB; }
 .login-stat-item { text-align: center; }
-.login-stat-val { font-family: 'Poppins'; font-size: 1.2rem; font-weight: 800;color:white; }
-.login-stat-lbl { font-size: .68rem; color: #d1d5db; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
-.login-footer { text-align: center; color: #E5E7EB; font-size: .75rem; margin-top: 20px; letter-spacing: .04em; }
+.login-stat-val { font-family: 'Poppins'; font-size: 1.2rem; font-weight: 800;color:#1E3A5F; }
+.login-stat-lbl { font-size: .68rem; color: #6b7280; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+.login-footer { text-align: center; color: #9CA3AF; font-size: .75rem; margin-top: 20px; letter-spacing: .04em; }
 
 div[data-testid="stButton"]:has(> button[key="l_student_btn"]) > button,
 div[data-testid="stButton"]:has(> button[key="l_teacher_btn"]) > button,
@@ -324,34 +344,22 @@ div[data-testid="stButton"]:has(> button[key="s_teacher_active"]) > button {
     text-transform: uppercase !important; box-shadow:none !important;
 }
 /* Landing button */
-.stElementContainer.st-key-landing_get_started button{
-    background:linear-gradient(135deg,#2563EB,#1D4ED8) !important;
-    color:white !important;
-    border:2px solid rgba(255,255,255,.85) !important;
-    border-radius:14px !important;
-    padding:15px 40px !important;
-    font-size:1rem !important;
-    font-weight:700 !important;
-    box-shadow:0 14px 34px rgba(37,99,235,.45) !important;
-    transition:.25s ease !important;
+div[data-testid="stButton"]:has(> button[key="back_to_landing"]) > button {
+    width:auto !important;
+    background:#FFFFFF !important;
+    color:#1E3A5F !important;
+    border:1px solid #D1D5DB !important;
+    border-radius:10px !important;
+    padding:8px 18px !important;
+    box-shadow:none !important;
 }
-
+div[data-testid="stButton"]:has(> button[key="back_to_landing"]) > button * {
+    color:#1E3A5F !important;
+}
 .stElementContainer.st-key-landing_get_started button:hover{
     background:linear-gradient(135deg,#1D4ED8,#1E40AF) !important;
     transform:translateY(-3px) !important;
     box-shadow:0 18px 40px rgba(0,0,0,.45) !important;
-}
-.stElementContainer.st-key-back_to_landing button{
-    width:auto !important;
-    background:transparent !important;
-    color:white !important;
-    border:1px solid rgba(255,255,255,.35) !important;
-    border-radius:10px !important;
-    padding:8px 18px !important;
-}
-
-.stElementContainer.st-key-back_to_landing button:hover{
-    background:rgba(255,255,255,.12) !important;
 }
 div[data-testid="stButton"]:has(> button[key^="nav_"]) > button {
     background: transparent !important; border: 1px solid transparent !important;
@@ -374,6 +382,18 @@ div[data-testid="stButton"]:has(> button[key^="nav_active_"]) > button {
     font-family: 'Poppins', sans-serif !important; font-size: .9rem !important;
     font-weight: 600 !important; text-align: left !important; padding: 10px 14px !important;
     letter-spacing: 0 !important; box-shadow: none !important; transform: none !important;
+}
+.page-title{
+    font-family:'Poppins', sans-serif;
+    font-size:1.9rem;
+    font-weight:800;
+    color:#1E3A5F;
+    margin:18px 0 2px;
+}
+.page-sub{
+    font-size:.92rem;
+    color:#64748B;
+    margin-bottom:22px;
 }
 div.block-container{
     padding-top:0rem !important;
@@ -610,7 +630,7 @@ if not st.session_state.logged_in and st.session_state.show_auth:
         st.write("")
         with tab_login:
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown('<p style="color:white;font-size:.82rem;margin-bottom:8px;letter-spacing:.06em;">Choose your role</p>', unsafe_allow_html=True)
+            st.markdown('<p style="color:#374151;font-size:.82rem;margin-bottom:8px;letter-spacing:.06em;">Choose your role</p>', unsafe_allow_html=True)
             rc1, rc2 = st.columns(2)
             with rc1:
                 is_active = st.session_state.login_role == "Student"
@@ -623,7 +643,7 @@ if not st.session_state.logged_in and st.session_state.show_auth:
                 if st.button("👩‍🏫\n\nTeacher", key=key, use_container_width=True):
                     st.session_state.login_role = "Teacher"; st.rerun()
 
-            st.markdown(f'<p style="color:white;font-size:.9rem;margin:10px 0 14px;font-weight:600;">✓ Logging in as: {st.session_state.login_role}</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#2563EB;font-size:.9rem;margin:10px 0 14px;font-weight:600;">✓ Logging in as: {st.session_state.login_role}</p>', unsafe_allow_html=True)
             email_l = st.text_input("📧 Email address", placeholder="you@gmail.com", key="email_l")
             pass_l  = st.text_input("🔒 Password", type="password", key="pass_l")
             st.markdown("<div style='height:20px;'></div>",unsafe_allow_html=True)
@@ -643,11 +663,11 @@ if not st.session_state.logged_in and st.session_state.show_auth:
                     st.session_state.user_email = email_l
                     st.rerun()
 
-            st.markdown('<p style="text-align:center;color:#d1d5db;font-size:.76rem;margin-top:14px;">Don\'t have an account? Switch to Sign Up ↑</p>', unsafe_allow_html=True)
+            st.markdown('<p style="text-align:center;color:#6b7280;font-size:.76rem;margin-top:14px;">Don\'t have an account? Switch to Sign Up ↑</p>', unsafe_allow_html=True)
 
         with tab_signup:
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown('<p style="color:white;font-size:.82rem;margin-bottom:8px;letter-spacing:.06em;">Choose your role</p>', unsafe_allow_html=True)
+            st.markdown('<p style="color:#374151;font-size:.82rem;margin-bottom:8px;letter-spacing:.06em;">Choose your role</p>', unsafe_allow_html=True)
             sc1, sc2 = st.columns(2)
             with sc1:
                 is_active = st.session_state.signup_role == "Student"
@@ -660,7 +680,7 @@ if not st.session_state.logged_in and st.session_state.show_auth:
                 if st.button("👩‍🏫\n\nTeacher", key=key, use_container_width=True):
                     st.session_state.signup_role = "Teacher"; st.rerun()
 
-            st.markdown(f'<p style="color:white;font-size:.9rem;margin:10px 0 14px;font-weight:600;">✓ Signing up as: {st.session_state.signup_role}</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#2563EB;font-size:.9rem;margin:10px 0 14px;font-weight:600;">✓ Signing up as: {st.session_state.signup_role}</p>', unsafe_allow_html=True)
             email_s = st.text_input("📧 Email address", placeholder="you@gmail.com", key="email_s")
             pass_s  = st.text_input("🔒 Password", type="password", key="pass_s")
 
@@ -693,7 +713,7 @@ if not st.session_state.logged_in and st.session_state.show_auth:
                 </div>
                 """, unsafe_allow_html=True)
             else:
-                st.markdown('<p style="color:#d1d5db;font-size:.76rem;margin-top:4px;">Min 8 chars · uppercase · number · special (!@#$%^&*)</p>', unsafe_allow_html=True)
+                st.markdown('<p style="color:#6b7280;font-size:.76rem;margin-top:4px;">Min 8 chars · uppercase · number · special (!@#$%^&*)</p>', unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Create Account  \u2192", key="btn_signup", use_container_width=True):
@@ -711,7 +731,7 @@ if not st.session_state.logged_in and st.session_state.show_auth:
                     st.session_state.user_email = email_s
                     st.rerun()
 
-            st.markdown('<p style="color:#d1d5db;font-size:.76rem;margin-top:14px;">Already have an account? Switch to Login ↑</p>', unsafe_allow_html=True)
+            st.markdown('<p style="color:#6b7280;font-size:.76rem;margin-top:14px;">Already have an account? Switch to Login ↑</p>', unsafe_allow_html=True)
 
         users_count = len(load_users())
         st.markdown(f"""
