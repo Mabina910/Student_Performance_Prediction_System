@@ -1,0 +1,6 @@
+users.json
+history.json
+notebook.ipynb
+appcode.txt
+*.csv
+.vscode/

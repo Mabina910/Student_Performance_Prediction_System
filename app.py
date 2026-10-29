@@ -490,7 +490,6 @@ if not st.session_state.logged_in and not st.session_state.show_auth:
 
     users_count = len(load_users())
 
-    # Hero block — plain st.markdown with f-string, NO html comments inside
     hero_html = (
         '<div style="max-width:700px;margin:0 auto;padding:20px 24px 0;">'
         '<div style="display:inline-flex;align-items:center;gap:7px;'
@@ -524,7 +523,7 @@ if not st.session_state.logged_in and not st.session_state.show_auth:
             st.session_state.show_auth = True
             st.rerun()
 
-    # Features + stats block
+
     bottom_html = (
         '<div style="max-width:700px;margin:52px auto 0;padding:0 24px;">'
 
